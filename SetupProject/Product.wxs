@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <?define UniversityProgramm_TargetDir=$(var.UniversityProgramm.TargetDir)?>
+  <?define NetFx480MinRelease = 528040 ?>
+	<Product Id="*" Name="IMap" Language="1033" Version="1.0.0.0" Manufacturer="IMap" UpgradeCode="aff05544-92a9-4949-8681-1e55d60f130a">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+    <UIRef Id="WixUI_InstallDir" />
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Feature Id="ProductFeature" Title="IMap" Level="1">
+      <ComponentRef Id="ApplicationShortcutDesktop" />
+      <ComponentRef Id="ApplicationStartMenu" />
+      <ComponentGroupRef Id="ProductComponents" />
+      <ComponentGroupRef Id="LocalesFiles" />
+    </Feature>
+    <Icon Id="icon.ico" SourceFile="$(var.ProjectDir)favicon.png" />
+    <Property Id="ARPPRODUCTICON" Value="icon.ico" />
+
+    <PropertyRef Id="NETFRAMEWORK45" />
+    <Property Id="WIX_IS_NETFRAMEWORK_480_OR_LATER_INSTALLED" Secure="yes" />
+    <SetProperty Id="WIX_IS_NETFRAMEWORK_480_OR_LATER_INSTALLED" Value="1" After="AppSearch">
+      NETFRAMEWORK45 >= "#$(var.NetFx480MinRelease)"
+    </SetProperty>
+    <Condition Message="This application requires .NET Framework 4.8 Please install the .NET Framework then run this installer again.">
+      <![CDATA[Installed OR WIX_IS_NETFRAMEWORK_480_OR_LATER_INSTALLED]]>
+    </Condition>
+
+  </Product>
+
+  <Fragment>
+    <UI Id="UserInterface">
+      <Property Id="WIXUI_INSTALLDIR" Value="TARGETDIR" />
+      <Property Id="WixUI_Mode" Value="Custom" />
+
+      <TextStyle Id="WixUI_Font_Normal" FaceName="Tahoma" Size="8" />
+      <TextStyle Id="WixUI_Font_Bigger" FaceName="Tahoma" Size="9" Bold="yes" />
+      <TextStyle Id="WixUI_Font_Title"  FaceName="Tahoma" Size="9" Bold="yes" />
+
+      <Property Id="DefaultUIFont" Value="WixUI_Font_Normal" />
+
+      <DialogRef Id="ProgressDlg" />
+      <DialogRef Id="ErrorDlg" />
+      <DialogRef Id="FilesInUse" />
+      <DialogRef Id="FatalError" />
+      <DialogRef Id="UserExit" />
+
+      <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
+      <Publish Dialog="WelcomeDlg" Control="Next" Event="EndDialog" Value="Return" Order="2"></Publish>
+
+    </UI>
+  </Fragment>
+
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+
+      <Directory Id="ProgramMenuFolder" Name="Programs">
+        <Component Id="ApplicationStartMenu" Guid="228335c1-291f-4d90-b7f4-ca1fdfb60fc5">
+          <RemoveFolder Id="ProgramMenuDir" On="uninstall" />
+          <RegistryValue Root="HKCU" Key="Software\[Manufacturer]\WixSetup" Type="integer" Value="1" Name="installed" KeyPath="yes" />
+          <Shortcut Id="ApplicationStartMenuShortcut" Name="IMap" Description="The best map" Target="[INSTALLFOLDER]UniversityProgramm.exe" WorkingDirectory="INSTALLFOLDER" />
+        </Component>
+      </Directory>
+
+      <Directory Id="DesktopFolder" Name="Desktop">
+        <Component Id="ApplicationShortcutDesktop" Guid="*">
+          <Shortcut Id="ApplicationDesktopShortcut" Name="IMap" Description="The best map" Target="[INSTALLFOLDER]UniversityProgramm.exe" WorkingDirectory="INSTALLFOLDER" />
+          <RemoveFolder Id="DesktopFolder" On="uninstall" />
+          <RegistryValue Root="HKCU" Key="Software/IMap" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+        </Component>
+      </Directory>
+      
+      <Directory Id="INSTALLFOLDER">
+        <Directory Id="Resourses" Name="Resourses">
+        </Directory>
+      </Directory>
+
+    </Directory>
+  </Fragment>
+	<Fragment>
+	  <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <Component Id="MaterialDesignColors.dll" Guid="a55e0f32-2483-4ffa-8da2-908e528d58a2">
+        <File Id="MaterialDesignColors.dll" Name="MaterialDesignColors.dll" Source="$(var.UniversityProgramm_TargetDir)MaterialDesignColors.dll" />
+      </Component>
+      <Component Id="MaterialDesignColors.pdb" Guid="830977a8-d0a6-466f-8280-b7c535707b72">
+        <File Id="MaterialDesignColors.pdb" Name="MaterialDesignColors.pdb" Source="$(var.UniversityProgramm_TargetDir)MaterialDesignColors.pdb" />
+      </Component>
+      <Component Id="Microsoft.Maps.MapControl.WPF.dll" Guid="03333881-bf27-4450-9e3d-3debb1cff3fc">
+        <File Id="Microsoft.Maps.MapControl.WPF.dll" Name="Microsoft.Maps.MapControl.WPF.dll" Source="$(var.UniversityProgramm_TargetDir)Microsoft.Maps.MapControl.WPF.dll" />
+      </Component>
+      <Component Id="Microsoft.Maps.MapControl.WPF.xml" Guid="b5497ea0-1ce3-4b97-9a88-ed8a026ddc26">
+        <File Id="Microsoft.Maps.MapControl.WPF.xml" Name="Microsoft.Maps.MapControl.WPF.xml" Source="$(var.UniversityProgramm_TargetDir)Microsoft.Maps.MapControl.WPF.xml" />
+      </Component>
+      <Component Id="MvvmCross.dll" Guid="ae8a9a2b-f0ed-4146-af98-a7bf723bd6ec">
+        <File Id="MvvmCross.dll" Name="MvvmCross.dll" Source="$(var.UniversityProgramm_TargetDir)MvvmCross.dll" />
+      </Component>
+      <Component Id="MvvmCross.pdb" Guid="13efe14f-06da-425b-b47a-0e4cca421afc">
+        <File Id="MvvmCross.pdb" Name="MvvmCross.pdb" Source="$(var.UniversityProgramm_TargetDir)MvvmCross.pdb" />
+      </Component>
+      <Component Id="MvvmCross.xml" Guid="9c4df2c6-81bc-470a-b6c8-090fc2b25c72">
+        <File Id="MvvmCross.xml" Name="MvvmCross.xml" Source="$(var.UniversityProgramm_TargetDir)MvvmCross.xml" />
+      </Component>
+      <Component Id="OpenTK.dll" Guid="5a9b43b4-a851-4d08-9c79-6a3f96e2f646">
+        <File Id="OpenTK.dll" Name="OpenTK.dll" Source="$(var.UniversityProgramm_TargetDir)OpenTK.dll" />
+      </Component>
+      <Component Id="OpenTK.GLControl.dll" Guid="9a02aabc-e765-4c5f-ab26-7b772019200c">
+        <File Id="OpenTK.GLControl.dll" Name="OpenTK.GLControl.dll" Source="$(var.UniversityProgramm_TargetDir)OpenTK.GLControl.dll" />
+      </Component>
+      <Component Id="OpenTK.GLControl.pdb" Guid="f85bdd20-59ba-4950-a512-78fe6467702a">
+        <File Id="OpenTK.GLControl.pdb" Name="OpenTK.GLControl.pdb" Source="$(var.UniversityProgramm_TargetDir)OpenTK.GLControl.pdb" />
+      </Component>
+      <Component Id="OpenTK.GLControl.xml" Guid="85ba0feb-2ef8-40f2-ba5f-a02259c25a62">
+        <File Id="OpenTK.GLControl.xml" Name="OpenTK.GLControl.xml" Source="$(var.UniversityProgramm_TargetDir)OpenTK.GLControl.xml" />
+      </Component>
+      <Component Id="OpenTK.pdb" Guid="f1d6f6b5-823d-434c-8b87-cc39b4e42847">
+        <File Id="OpenTK.pdb" Name="OpenTK.pdb" Source="$(var.UniversityProgramm_TargetDir)OpenTK.pdb" />
+      </Component>
+      <Component Id="OpenTK.xml" Guid="5227dcc8-7880-423c-a0d5-0ff99c6cee6a">
+        <File Id="OpenTK.xml" Name="OpenTK.xml" Source="$(var.UniversityProgramm_TargetDir)OpenTK.xml" />
+      </Component>
+      <Component Id="System.Diagnostics.DiagnosticSource.dll" Guid="cb69685d-5e74-4470-98fd-b57a2e1cd5fc">
+        <File Id="System.Diagnostics.DiagnosticSource.dll" Name="System.Diagnostics.DiagnosticSource.dll" Source="$(var.UniversityProgramm_TargetDir)System.Diagnostics.DiagnosticSource.dll" />
+      </Component>
+      <Component Id="System.Diagnostics.DiagnosticSource.xml" Guid="0899a1e3-c711-49d0-a622-ab855a9e7c1c">
+        <File Id="System.Diagnostics.DiagnosticSource.xml" Name="System.Diagnostics.DiagnosticSource.xml" Source="$(var.UniversityProgramm_TargetDir)System.Diagnostics.DiagnosticSource.xml" />
+      </Component>
+      <Component Id="UniversityProgramm.exe" Guid="15b1cc8a-0b20-470f-81f4-fbec56ac03bc">
+        <File Id="UniversityProgramm.exe" Name="UniversityProgramm.exe" Source="$(var.UniversityProgramm_TargetDir)UniversityProgramm.exe" />
+      </Component>
+      <Component Id="UniversityProgramm.exe.config" Guid="1af0b18c-4a38-4e3b-84dc-59a9daac59e8">
+        <File Id="UniversityProgramm.exe.config" Name="UniversityProgramm.exe.config" Source="$(var.UniversityProgramm_TargetDir)UniversityProgramm.exe.config" />
+      </Component>
+      <Component Id="UniversityProgramm.pdb" Guid="d77fb6a5-6e40-4597-bf4a-1e1fe087ee3c">
+        <File Id="UniversityProgramm.pdb" Name="UniversityProgramm.pdb" Source="$(var.UniversityProgramm_TargetDir)UniversityProgramm.pdb" />
+      </Component>
+      <Component Id="Xamarin.Forms.Core.dll" Guid="2622efc2-3483-4f43-ada6-edca0830719c">
+        <File Id="Xamarin.Forms.Core.dll" Name="Xamarin.Forms.Core.dll" Source="$(var.UniversityProgramm_TargetDir)Xamarin.Forms.Core.dll" />
+      </Component>
+      <Component Id="Xamarin.Forms.Core.pdb" Guid="bd1db581-bcd8-4b18-a30a-43415a34ccbb">
+        <File Id="Xamarin.Forms.Core.pdb" Name="Xamarin.Forms.Core.pdb" Source="$(var.UniversityProgramm_TargetDir)Xamarin.Forms.Core.pdb" />
+      </Component>
+      <Component Id="Xamarin.Forms.Core.xml" Guid="eee40e86-265c-4ba8-8ef6-0c140387356b">
+        <File Id="Xamarin.Forms.Core.xml" Name="Xamarin.Forms.Core.xml" Source="$(var.UniversityProgramm_TargetDir)Xamarin.Forms.Core.xml" />
+      </Component>
+      <Component Id="Xamarin.Forms.GoogleMaps.Bindings.dll" Guid="3a94bd5e-68b3-4481-af3f-178b127279dd">
+        <File Id="Xamarin.Forms.GoogleMaps.Bindings.dll" Name="Xamarin.Forms.GoogleMaps.Bindings.dll" Source="$(var.UniversityProgramm_TargetDir)Xamarin.Forms.GoogleMaps.Bindings.dll" />
+      </Component>
+      <Component Id="Xamarin.Forms.GoogleMaps.dll" Guid="b5dcfb85-5fe3-4b90-b643-6bc1e7cf3fc5">
+        <File Id="Xamarin.Forms.GoogleMaps.dll" Name="Xamarin.Forms.GoogleMaps.dll" Source="$(var.UniversityProgramm_TargetDir)Xamarin.Forms.GoogleMaps.dll" />
+      </Component>
+      <Component Id="Xamarin.Forms.Maps.dll" Guid="7b011cbc-85f8-4ab3-a7eb-4e46fa4404dd">
+        <File Id="Xamarin.Forms.Maps.dll" Name="Xamarin.Forms.Maps.dll" Source="$(var.UniversityProgramm_TargetDir)Xamarin.Forms.Maps.dll" />
+      </Component>
+      <Component Id="Xamarin.Forms.Maps.WPF.dll" Guid="6764ea8b-7847-4979-bdd4-18b4ea5c670c">
+        <File Id="Xamarin.Forms.Maps.WPF.dll" Name="Xamarin.Forms.Maps.WPF.dll" Source="$(var.UniversityProgramm_TargetDir)Xamarin.Forms.Maps.WPF.dll" />
+      </Component>
+      <Component Id="Xamarin.Forms.Maps.WPF.pdb" Guid="e1a9b586-969e-427f-b7af-4426a9198892">
+        <File Id="Xamarin.Forms.Maps.WPF.pdb" Name="Xamarin.Forms.Maps.WPF.pdb" Source="$(var.UniversityProgramm_TargetDir)Xamarin.Forms.Maps.WPF.pdb" />
+      </Component>
+      <Component Id="Xamarin.Forms.Maps.xml" Guid="5ac466df-a29d-456b-9dd8-a45f8352409e">
+        <File Id="Xamarin.Forms.Maps.xml" Name="Xamarin.Forms.Maps.xml" Source="$(var.UniversityProgramm_TargetDir)Xamarin.Forms.Maps.xml" />
+      </Component>
+      <Component Id="Xamarin.Forms.Platform.dll" Guid="8e1dee24-6dd7-4600-a40c-a807121483d6">
+        <File Id="Xamarin.Forms.Platform.dll" Name="Xamarin.Forms.Platform.dll" Source="$(var.UniversityProgramm_TargetDir)Xamarin.Forms.Platform.dll" />
+      </Component>
+      <Component Id="Xamarin.Forms.Platform.WPF.dll" Guid="c1d29184-61d6-4ab4-8e52-5661dedb2c1b">
+        <File Id="Xamarin.Forms.Platform.WPF.dll" Name="Xamarin.Forms.Platform.WPF.dll" Source="$(var.UniversityProgramm_TargetDir)Xamarin.Forms.Platform.WPF.dll" />
+      </Component>
+      <Component Id="Xamarin.Forms.Platform.WPF.pdb" Guid="f62e0fc3-02ed-4604-87b1-b9d397205c3b">
+        <File Id="Xamarin.Forms.Platform.WPF.pdb" Name="Xamarin.Forms.Platform.WPF.pdb" Source="$(var.UniversityProgramm_TargetDir)Xamarin.Forms.Platform.WPF.pdb" />
+      </Component>
+      <Component Id="Xamarin.Forms.Xaml.dll" Guid="9ff74d58-de33-461a-8107-e47d0a24939f">
+        <File Id="Xamarin.Forms.Xaml.dll" Name="Xamarin.Forms.Xaml.dll" Source="$(var.UniversityProgramm_TargetDir)Xamarin.Forms.Xaml.dll" />
+      </Component>
+      <Component Id="Xamarin.Forms.Xaml.pdb" Guid="9a2f296c-a8fe-4ef4-9785-57468ac0d712">
+        <File Id="Xamarin.Forms.Xaml.pdb" Name="Xamarin.Forms.Xaml.pdb" Source="$(var.UniversityProgramm_TargetDir)Xamarin.Forms.Xaml.pdb" />
+      </Component>
+      <Component Id="Xamarin.Forms.Xaml.xml" Guid="6ca8a326-3c8e-4948-8cde-a97e6eea9b86">
+        <File Id="Xamarin.Forms.Xaml.xml" Name="Xamarin.Forms.Xaml.xml" Source="$(var.UniversityProgramm_TargetDir)Xamarin.Forms.Xaml.xml" />
+      </Component>
+	  </ComponentGroup>
+	</Fragment>
+  <Fragment>
+    <ComponentGroup Id="LocalesFiles" Directory="Resourses">
+      <Component Id="Path1.2.txt" Guid="f25188f8-05ba-4fbd-8927-f8594c82bfcf">
+        <File Id="Path1.2.txt" Name="Path1.2.txt" Source="$(var.UniversityProgramm_TargetDir)Resourses/Path1.2.txt" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>
